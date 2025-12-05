@@ -1,0 +1,49 @@
+Checks: >
+  -*,
+  readability-identifier-naming
+
+CheckOptions:
+  # Types: classes, structs, aliases, enums, type templates
+  - key: readability-identifier-naming.TypeCase
+    value: PascalCase
+  - key: readability-identifier-naming.ClassCase
+    value: PascalCase
+  - key: readability-identifier-naming.StructCase
+    value: PascalCase
+  - key: readability-identifier-naming.EnumCase
+    value: PascalCase
+  - key: readability-identifier-naming.EnumConstantCase
+    value: lower_case           # e.g., mode_auto, mode_manual
+  - key: readability-identifier-naming.TypedefCase
+    value: PascalCase
+  - key: readability-identifier-naming.TemplateParameterCase
+    value: PascalCase
+
+  # Functions / methods
+  - key: readability-identifier-naming.FunctionCase
+    value: lower_case           # e.g., read_imu_data
+  - key: readability-identifier-naming.MethodCase
+    value: lower_case
+  - key: readability-identifier-naming.NamespaceCase
+    value: lower_case           # e.g., avionics_core
+
+  # Variables
+  - key: readability-identifier-naming.VariableCase
+    value: lower_case
+  - key: readability-identifier-naming.GlobalVariableCase
+    value: lower_case
+  - key: readability-identifier-naming.MemberCase
+    value: lower_case           # e.g., imu_state_
+  - key: readability-identifier-naming.ParameterCase
+    value: lower_case
+  - key: readability-identifier-naming.LocalVariableCase
+    value: lower_case
+
+  # Macros (if you want them snake_case; change to UPPER_CASE if you prefer)
+  - key: readability-identifier-naming.MacroDefinitionCase
+    value: lower_case
+
+  # Allow underscores basically everywhere
+  - key: readability-identifier-naming.AllowedRegexp
+    value: '^[a-zA-Z0-9_]+$'
+
