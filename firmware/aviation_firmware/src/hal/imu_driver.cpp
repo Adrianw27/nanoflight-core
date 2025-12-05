@@ -5,11 +5,11 @@
 
 namespace hal {
 
-bool imuInit(){
+bool imu_init(){
 	Wire.begin();
 
-	Wire.beginTransmission(config::kImuI2cAddr);
-	Wire.write(config::kPwrMgmt1Addr);
+	Wire.beginTransmission(config::imu_i2c_address);
+	Wire.write(config::pwr_mgmt_address);
 	Wire.write(0x00);
 
 	uint8_t status = Wire.endTransmission();
@@ -19,23 +19,23 @@ bool imuInit(){
 	return status == 0;
 }
 
-bool imuReadRaw(types::ImuRawSample& out){	
-	 Wire.beginTransmission(config::kImuI2cAddr);
-	 Wire.write(config::kSensorOutputAddr);  
+bool imu_read_raw(types::ImuRawSample& out){	
+	 Wire.beginTransmission(config::imu_i2c_address);
+	 Wire.write(config::accel_output_address);  
 	 if (Wire.endTransmission(false) != 0) {     
 		 return false;                          
 	 }
 
     	// 14 bytes: accel(6) + temp(2) + gyro(6)
-	constexpr uint8_t kBytesToRead = 14;
-	uint8_t bytesRead = Wire.requestFrom(config::kImuI2cAddr, kBytesToRead);
-	if (bytesRead < kBytesToRead) {
+	constexpr uint8_t num_bytes = 14;
+	uint8_t bytes_read = Wire.requestFrom(config::imu_i2c_address, num_bytes);
+	if (bytes_read < num_bytes) {
 		return false; 
 	}
 
 	// Read all 8 bit registers and store in buffer
-	uint8_t buf[kBytesToRead];
-	for (uint8_t i = 0; i < kBytesToRead; ++i) { 	
+	uint8_t buf[num_bytes];
+	for (uint8_t i = 0; i < num_bytes; ++i) { 	
 		buf[i] = Wire.read();
 	}
 
@@ -51,21 +51,21 @@ bool imuReadRaw(types::ImuRawSample& out){
 	return true;
 }
 
-bool imuReadScaled(types::ImuScaledSample& out){
+bool imu_read_scaled(types::ImuScaledSample& out){
 	types::ImuRawSample raw{};
 	if (!imuReadRaw(raw)) {
 		return false;
 	}
 
-	out.ax = static_cast<float>(raw.ax) / config::kLsbPerG;
-	out.ay = static_cast<float>(raw.ay) / config::kLsbPerG;
-	out.az = static_cast<float>(raw.az) / config::kLsbPerG;
+	out.ax = static_cast<float>(raw.ax) / config::accel_lsb_per_g;
+	out.ay = static_cast<float>(raw.ay) / config::accel_lsb_per_g;
+	out.az = static_cast<float>(raw.az) / config::accel_lsb_per_g;
 
-	out.t = static_cast<float>(raw.t) / config::kLsbPerC + config::kTempOffset;
+	out.t = static_cast<float>(raw.t) / config::temp_lsb_per_deg + config::temp_offset;
 
-	out.gx = static_cast<float>(raw.gx) / config::kLsbPerDps;
-	out.gy = static_cast<float>(raw.gy) / config::kLsbPerDps;
-	out.gz = static_cast<float>(raw.gz) / config::kLsbPerDps;
+	out.gx = static_cast<float>(raw.gx) / config::gyro_lsb_per_dps;
+	out.gy = static_cast<float>(raw.gy) / config::gyro_lsb_per_dps;
+	out.gz = static_cast<float>(raw.gz) / config::gyro_lsb_per_dps;
 
 	return true;
 }

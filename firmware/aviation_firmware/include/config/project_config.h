@@ -1,19 +1,19 @@
 #ifndef CONFIG_PROJECT_CONFIG_H
 #define CONFIG_PROJECT_CONFIG_H
 
-#include <stdint.h>
+#include <cstdint>
 
 namespace config {
-	// I 2 c addresses
-	constexpr uint8_t kImuI2cAddr = 0x68;
-	constexpr uint8_t kPwrMgmt1Addr = 0x6B;
-	constexpr uint8_t kSensorOutputAddr = 0x3B;
+	// I2c register addresses
+	constexpr uint8_t imu_i2c_address = 0x68;
+	constexpr uint8_t pwr_mgmt_address = 0x6B;
+	constexpr uint8_t accel_output_address = 0x3B;
 
 	// raw data / LSB per unit =  unit
-	constexpr float kAccelLsbPerG = 16384.0f;
-	constexpr float kTempLsbPerC = 340.0f;
-	constexpr float kTempOffset = 36.53f;
-	constexpr float kGyroLsbPerDps = 131.0f;
+	constexpr float accel_lsb_per_g = 16384.0f;
+	constexpr float temp_lsb_per_deg = 340.0f;
+	constexpr float temp_offset = 36.53f;
+	constexpr float gyro_lsb_per_dps = 131.0f;
 }
 
 #endif

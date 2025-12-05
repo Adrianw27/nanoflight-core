@@ -1,10 +1,11 @@
 #ifndef CONFIG_TYPES_H
 #define CONFIG_TYPES_H
 
-#include <stdint.h>
+#include <cstdint>
 
 namespace types {
 
+// Holds raw sensor output for each data point
 struct ImuRawSample {
     int16_t ax;
     int16_t ay;
@@ -15,6 +16,7 @@ struct ImuRawSample {
     int16_t gz;
 };
 
+// Holds unit scaled sensor output for each data point
 struct ImuScaledSample {
     float ax_g;
     float ay_g;

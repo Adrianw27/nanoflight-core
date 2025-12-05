@@ -5,9 +5,14 @@
 
 namespace hal {
 
-bool imuInit();
-bool imuReadRaw(types::ImuRawSample& out);
-bool imuReadScaled(types::ImuScaledSample& out);
+// Initialize i2c connection to imu
+bool imu_init();
+
+// Read raw sensor data through i2c (fill reference struct with data)
+bool imu_read_raw(types::ImuRawSample& out);
+
+// Calculate unit scaled data values (fill reference struct with scaled data)
+bool imu_read_scaled(types::ImuScaledSample& out);
 
 }
 

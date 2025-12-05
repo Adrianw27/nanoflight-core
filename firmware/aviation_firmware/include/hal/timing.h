@@ -1,12 +1,15 @@
 #ifndef HAL_TIMING_H
 #define HAL_TIMING_H
 
-#include <stdint.h>
+#include <cstdint>
 
 namespace hal {
 
-uint32_t nowMicros();
-float computeDeltaSeconds(uint32_t& lastTimestampMicros);
+// Get the current timestamp in microseconds
+uint32_t get_current_micros();
+
+// Get delta time since last timestamp recorded
+float compute_delta_seconds(uint32_t& last_micros);
 
 }
 
