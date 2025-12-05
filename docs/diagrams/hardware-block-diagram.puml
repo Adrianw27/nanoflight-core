@@ -1,0 +1,21 @@
+@startuml hardware_block_diagram
+title Mini Avionics Hardware Block Diagram
+
+skinparam rectangle {
+  BorderColor black
+  BackgroundColor #EEEEEE
+  RoundCorner 15
+}
+skinparam shadowing false
+
+rectangle "IMU Sensor Module\n(MPU-6050 / GY-521)" as IMU
+
+rectangle "Avionics Computer\n(Arduino Uno R3)\n\n- HAL (I²C, timing, serial)\n- Fusion (Kalman)\n- Controllers\n- Comms (Telemetry)\n- App (Scheduler, Modes)" as AVR
+
+rectangle "Ground Station\n(PC, Python)\n\n- Telemetry Client\n- 3D Visualization\n- Plots\n- (Future) FastAPI Backend" as GS
+
+IMU -[#blue]-> AVR : I²C (SDA, SCL)
+AVR -[#green]-> GS : USB Serial (Telemetry)
+
+@enduml
+

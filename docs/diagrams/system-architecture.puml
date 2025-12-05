@@ -1,0 +1,44 @@
+
+@startuml system_architecture
+title nanoflight core System – Current Architecture
+
+skinparam rectangle {
+  BorderColor black
+  RoundCorner 15
+  BackgroundColor #EEEEEE
+}
+
+skinparam shadowing false
+
+rectangle "Ground Station\n(Python)" as GS {
+  rectangle "Telemetry Client\n(telemetry_client/)" as GS_TC
+  rectangle "UI\n(ui/)\n- 3D Visualization\n- Plots" as GS_UI
+  rectangle "(Future) FastAPI Backend\n(fastapi_backend/)" as GS_API
+}
+
+rectangle "On-Board Avionics Computer\nArduino Uno – C++ Firmware" as AVR {
+
+  rectangle "HAL Layer\n(include/hal, src/hal)" as HAL {
+    rectangle "IMU Driver\n(MPU-6050 @ I²C)" as IMU
+    rectangle "Timing\n(micros()/millis())" as TIME
+    rectangle "Serial Port\n(USB Serial)" as SERIAL
+  }
+
+  rectangle "Fusion Layer\n(include/fusion, src/fusion)\n- Kalman Filter (Pitch/Roll)" as FUSION
+  rectangle "Controllers Layer\n(include/controllers, src/controllers)\n- (Future) Attitude Controller / PID" as CTRL
+  rectangle "Comms Layer\n(include/comms, src/comms)\n- Telemetry Encoding (CSV / Frames)" as COMMS
+  rectangle "App Layer\n(include/app, src/app)\n- Cooperative Scheduler\n- Mode State Machine\n  (STANDBY / ARMED / ACTIVE / FAULT)" as APP
+}
+
+IMU   -down-> FUSION : raw accel/gyro
+TIME  -down-> FUSION : dt
+FUSION -down-> CTRL  : attitude estimate
+CTRL  -down-> COMMS  : control outputs (future)
+APP   -down-> CTRL   : target / mode
+APP   -down-> COMMS  : mode/status
+COMMS -down-> SERIAL : telemetry frames
+SERIAL -[thickness=2,#green]-> GS_TC : "USB Serial\nTelemetry\n(+ Future Commands)"
+
+GS_TC -down-> GS_UI : parsed telemetry stream
+GS_UI -right-> GS_API : (optional) push data / configs
+@enduml
