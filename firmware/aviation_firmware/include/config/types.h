@@ -1,6 +1,10 @@
 #ifndef TYPES
 #define TYPES
 
+#include <stdint.h>
+
+namespace types {
+
 struct ImuRawSample {
     int16_t ax;
     int16_t ay;
@@ -19,5 +23,6 @@ struct ImuScaledSample {
     float gz_dps;
 };
 
+}
 
 #endif
