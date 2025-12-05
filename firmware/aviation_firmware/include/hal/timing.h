@@ -1,5 +1,5 @@
-#ifndef TIMING
-#define TIMING
+#ifndef HAL_TIMING_H
+#define HAL_TIMING_H
 
 #include <stdint.h>
 

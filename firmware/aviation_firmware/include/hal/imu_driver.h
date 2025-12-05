@@ -1,5 +1,5 @@
-#ifndef IMU_DRIVER
-#define IMU_DRIVER
+#ifndef HAL_IMU_DRIVER_H
+#define HAL_IMU_DRIVER_H
 
 #include "config/types.h"
 
