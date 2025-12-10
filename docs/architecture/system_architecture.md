@@ -24,7 +24,7 @@ More detailed block diagrams, timing diagrams, and details will be added as the 
 
 ## System Architecture Diagram
 
-![System Architecture](../diagrams/system-architecture.png)
+![System Architecture](docs/diagrams/system-architecture.png)
 
 ---
 
@@ -171,7 +171,7 @@ More detailed block diagrams, timing diagrams, and details will be added as the 
 
 ### Initial Block Diagram
 
-![Hardware Block Diagram](../diagrams/hardware-block-diagram.png)
+![Hardware Block Diagram](docs/diagrams/hardware-block-diagram.png)
 
 - **Arduino Uno R3** acts as the avionics computer.
 - **GY-521 (MPU-6050)** is connected to the Arduino via I²C (SDA/SCL) and provides 3-axis accelerometer and gyroscope data.
