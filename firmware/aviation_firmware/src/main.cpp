@@ -11,7 +11,7 @@ using types::RawAccelSample;
 using types::RawGyroSample;
 using types::ScaledAccelSample;
 using types::ScaledGyroSample;
-using types::AccelTiltAngles
+using types::AccelTiltAngles;
 
 void setup() {
 	Serial.begin(115200);
@@ -33,7 +33,6 @@ void loop() {
 	}
 	else {
 		Serial.println("Error reading sensor data");
-		continue;
 	}
 
 	// print sensor data and pitch angles
@@ -62,7 +61,5 @@ void loop() {
 		Serial.print("Temperature: ");
 		Serial.println(temp);
 	}
-
-}
 }
 

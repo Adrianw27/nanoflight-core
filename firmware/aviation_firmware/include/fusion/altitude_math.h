@@ -6,7 +6,7 @@
 namespace fusion {
 
 // Calculate pitch from accelerometer data
-double get_angles_from_accel(types::ScaledAccelSample&, types::AccelTiltAngles&);
+bool get_angles_from_accel(types::ScaledAccelSample&, types::AccelTiltAngles&);
 
 }
 

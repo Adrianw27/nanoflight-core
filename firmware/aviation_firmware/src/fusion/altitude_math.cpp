@@ -4,9 +4,9 @@
 namespace fusion {
 
 bool get_angles_from_accel(types::ScaledAccelSample& accel, types::AccelTiltAngles angles){
-	accel.ax = x;
-	accel.ay = y;
-	accel.az = z;
+	float x = accel.ax_s;
+	float y = accel.ay_s;
+	float z = accel.az;
 
 	float denom = sqrt(y * y + z * z);
 	if (denom == 0.0f) {

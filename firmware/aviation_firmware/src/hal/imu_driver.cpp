@@ -27,7 +27,7 @@ bool imu_init(){
 	return status == 0;
 }
 
-bool imu_read_raw(types::RawAccelSample& accel, types::RawGyroSample& gyro, int16_t temp){	
+bool imu_read_raw(types::RawAccelSample& accel, types::RawGyroSample& gyro, int16_t% temp){	
 	 Wire.beginTransmission(config::imu_i2c_address);
 	 Wire.write(config::accel_output_address);  
 	 if (Wire.endTransmission(false) != 0) {     
@@ -48,7 +48,7 @@ bool imu_read_raw(types::RawAccelSample& accel, types::RawGyroSample& gyro, int1
 	}
 
 	// Convert individual bytes to 16 bit int
-	accel.ax = to_int16(buf[0],  buf[1])&;
+	accel.ax = to_int16(buf[0],  buf[1]);
 	accel.ay = to_int16(buf[2],  buf[3]);
 	accel.az = to_int16(buf[4],  buf[5]);
 	
@@ -56,7 +56,7 @@ bool imu_read_raw(types::RawAccelSample& accel, types::RawGyroSample& gyro, int1
 
 	gyro.gx = to_int16(buf[8],  buf[9]);
 	gyro.gy = to_int16(buf[10], buf[11]);
-	gyro.gz = to_int16(buf[12], buf[13])
+	gyro.gz = to_int16(buf[12], buf[13]);
 	return true;
 }
 
@@ -64,7 +64,7 @@ bool imu_read_scaled(types::ScaledAccelSample& accel, types::ScaledGyroSample& g
 	types::RawAccelSample raw_accel{};
 	types::RawGyroSample raw_gyro{};
 	float raw_temp;
-	if (!imu_read_raw(accel, gyro, raw_temp)) {
+	if (!imu_read_raw(raw_accel, raw_gyro, raw_temp)) {
 		return false;
 	}
 
@@ -76,7 +76,7 @@ bool imu_read_scaled(types::ScaledAccelSample& accel, types::ScaledGyroSample& g
 
 	gyro.gx_s = static_cast<float>(raw_gyro.gx) / config::gyro_lsb_per_dps;
 	gyro.gy_s = static_cast<float>(raw_gyro.gy) / config::gyro_lsb_per_dps;
-	gyro.gx_z = static_cast<float>(raw_gyro.gz) / config::gyro_lsb_per_dps;
+	gyro.gz_s = static_cast<float>(raw_gyro.gz) / config::gyro_lsb_per_dps;
 
 	return true;
 }
