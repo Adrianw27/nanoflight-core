@@ -2,6 +2,8 @@
 Mini Avionics &amp; Guidance Computer (with IMU Kalman attitude estimation and Python ground-station visualization)
 Current progress on feat branch
 
+![System Architecture](https://github.com/Adrianw27/nanoflight-core/blob/main/docs/diagrams/system_architecture.png?raw=true)
+
 ## Overview
 
 This project implements a miniature avionics and guidance computer on an Arduino Uno using an MPU-6050 IMU, plus a PC-based ground station for telemetry visualization and analysis.
