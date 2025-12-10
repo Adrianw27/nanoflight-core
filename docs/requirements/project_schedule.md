@@ -1,6 +1,6 @@
 
 # Mini Avionics & Guidance Computer — Project Schedule
-
+For personal use to track project completion
 ## Phase 0 – Project Setup (0.5–1 day)
 - Create GitHub repository with base structure (`firmware/`, `ground_station/`, `docs/`, `media/`).
 - Add top-level `README.md` with:
