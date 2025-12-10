@@ -10,6 +10,10 @@ uint32_t get_current_micros(){
 	return micros();
 }
 
+uint32_t get_uptime(){
+	return millis();
+}
+
 double compute_delta_seconds(uint32_t& last_micros){
 	uint32_t current_micros = micros();
 	uint32_t delta = current_micros - last_micros;  

@@ -8,6 +8,9 @@ namespace hal {
 // Get the current timestamp in microseconds
 uint32_t get_current_micros();
 
+// get uptime in millis
+uint32_t get_uptime();
+
 // Get delta time since last timestamp recorded
 double compute_delta_seconds(uint32_t& last_micros);
 
