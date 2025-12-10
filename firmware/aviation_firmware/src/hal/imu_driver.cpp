@@ -13,6 +13,12 @@ using types::ScaledGyroSample;
 
 namespace hal {
 
+inline int16_t to_int16(uint8_t hi, uint8_t lo) {
+    return static_cast<int16_t>(
+        (static_cast<uint16_t>(hi) << 8) | static_cast<uint16_t>(lo)
+    );
+}
+
 bool imu_init(){
 	Wire.begin();
 
@@ -27,7 +33,7 @@ bool imu_init(){
 	return status == 0;
 }
 
-bool imu_read_raw(types::RawAccelSample& accel, types::RawGyroSample& gyro, int16_t% temp){	
+bool imu_read_raw(types::RawAccelSample& accel, types::RawGyroSample& gyro, int16_t& temp){	
 	 Wire.beginTransmission(config::imu_i2c_address);
 	 Wire.write(config::accel_output_address);  
 	 if (Wire.endTransmission(false) != 0) {     
@@ -60,35 +66,25 @@ bool imu_read_raw(types::RawAccelSample& accel, types::RawGyroSample& gyro, int1
 	return true;
 }
 
-bool imu_read_scaled(types::ScaledAccelSample& accel, types::ScaledGyroSample& gyro, float& temp){
+bool imu_read_scaled(types::ScaledAccelSample& accel, types::ScaledGyroSample& gyro, float& temp_cel){
 	types::RawAccelSample raw_accel{};
 	types::RawGyroSample raw_gyro{};
-	float raw_temp;
+	int16_t raw_temp;
 	if (!imu_read_raw(raw_accel, raw_gyro, raw_temp)) {
 		return false;
 	}
 
-	accel.ax_s = static_cast<float>(raw_accel.ax) / config::accel_lsb_per_g;
-	accel.ay_s = static_cast<float>(raw_accel.ay) / config::accel_lsb_per_g;
-	accel.az_s = static_cast<float>(raw_accel.az) / config::accel_lsb_per_g;
+	accel.ax_g = static_cast<float>(raw_accel.ax) / config::accel_lsb_per_g;
+	accel.ay_g = static_cast<float>(raw_accel.ay) / config::accel_lsb_per_g;
+	accel.az_g = static_cast<float>(raw_accel.az) / config::accel_lsb_per_g;
 
-	temp = static_cast<float>(raw_temp) / config::temp_lsb_per_deg + config::temp_offset;
+	temp_cel = static_cast<float>(raw_temp) / config::temp_lsb_per_deg + config::temp_offset;
 
-	gyro.gx_s = static_cast<float>(raw_gyro.gx) / config::gyro_lsb_per_dps;
-	gyro.gy_s = static_cast<float>(raw_gyro.gy) / config::gyro_lsb_per_dps;
-	gyro.gz_s = static_cast<float>(raw_gyro.gz) / config::gyro_lsb_per_dps;
+	gyro.gx_dps = static_cast<float>(raw_gyro.gx) / config::gyro_lsb_per_dps;
+	gyro.gy_dps = static_cast<float>(raw_gyro.gy) / config::gyro_lsb_per_dps;
+	gyro.gz_dps = static_cast<float>(raw_gyro.gz) / config::gyro_lsb_per_dps;
 
 	return true;
-}
-
-}
-
-namespace hal {
-
-inline int16_t to_int16(uint8_t hi, uint8_t lo) {
-    return static_cast<int16_t>(
-        (static_cast<uint16_t>(hi) << 8) | static_cast<uint16_t>(lo)
-    );
 }
 
 }

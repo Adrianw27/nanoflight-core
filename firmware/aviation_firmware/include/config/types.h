@@ -22,22 +22,22 @@ struct RawGyroSample {
 
 // Holds unit scaled accelerometer output for each data point
 struct ScaledAccelSample {
-	float ax_s;
-	float ay_s;
-	float az_s;
+	float ax_g;
+	float ay_g;
+	float az_g;
 };
 
 // Holds unit scaled gyro output for each data point
 struct ScaledGyroSample {
-	float gx_s;
-	float gy_s;
-	float gz_s;
+	float gx_dps;
+	float gy_dps;
+	float gz_dps;
 };
 
 // Holds pitch, roll angles
-struct AccelTiltAngles {
-	float pitch;
-	float roll;
+struct AttitudeState {
+	double pitch_deg;
+	double roll_deg;
 };
 
 }

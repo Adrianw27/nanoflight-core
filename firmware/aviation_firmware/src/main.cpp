@@ -3,15 +3,13 @@
 #include "config/types.h"
 #include "hal/imu_driver.h"
 #include "hal/timing.h"
-#include "fusion/altitude_math.h"
+#include "fusion/attitude_math.h"
 #include <cstdint>
 
 using std::uint32_t;
-using types::RawAccelSample;
-using types::RawGyroSample;
 using types::ScaledAccelSample;
 using types::ScaledGyroSample;
-using types::AccelTiltAngles;
+using types::AttitudeState;
 
 void setup() {
 	Serial.begin(115200);
@@ -23,43 +21,49 @@ void loop() {
 
 	ScaledAccelSample accel;
 	ScaledGyroSample gyro;
-	float temp;
-	AccelTiltAngles angles;
+	float temp_cel;
+	AttitudeState state;
 
-	if (hal::imu_read_scaled(accel, gyro, temp)) {
-		if (!fusion::get_angles_from_accel(accel, angles)){
-			Serial.println("Error calculating roll and pitch");	
+	uint32_t current_micros = hal::get_current_micros();
+	uint32_t dt_micros = current_micros - last_micros;
+	double dt_sec = dt_micros / 1000000.0;
+	last_micros = current_micros;
+
+	if (hal::imu_read_scaled(accel, gyro, temp_cel) {
+
+		state.pitch_deg = fusion::get_pitch_from_accel(accel);
+		state.roll_deg = fusion::get_roll_from_accel(accel);
+		update_state_by_gyro(gyro, state, dt_sec);
+
+		if (dt_micros > 20000) { // e.g., print at 50 Hz
+			// Print all data in csv for ground station
+
+			// Accelerometer data (x,y,z) - units g
+			Serial.print(accel.ax_g);
+			Serial.print(',');
+			Serial.print(accel.ay_g);
+			Serial.print(',');
+			Serial.print(accel.az_g);
+			
+			// Gyroscope data (x,y,z) - units deg/s
+			Serial.print(gyro.gx_dps);
+			Serial.print(',');
+			Serial.print(gyro.gy_dps);
+			Serial.print(',');
+			Serial.print(gyro.gz_dps)
+			Serial.print(',');;
+			
+			Serial.print(temp_cel); // Temperature - units deg celcius
+			Serial.print(',');
+
+			Serial.print(state.pitch_deg); // Pitch - units deg
+			Serial.print(',');
+
+			Serial.print(state.roll_deg); // Roll - units deg
 		}
 	}
 	else {
 		Serial.println("Error reading sensor data");
-	}
-
-	// print sensor data and pitch angles
-	uint32_t current_micros = hal::get_current_micros();
-	if (current_micros - last_micros > 20000) { // e.g., print at 50 Hz
-		last_micros = current_micros;
-
-		Serial.println("Accelerometer data (X, Y, Z): ");
-		Serial.print(accel.ax_s);
-		Serial.print(',');
-		Serial.print(accel.ay_s);
-		Serial.print(',');
-		Serial.println(accel.az_s);
-		
-		Serial.println("Gyroscope data (X, Y, Z): ");
-		Serial.print(gyro.gx_s);
-		Serial.print(',');
-		Serial.print(gyro.gy_s);
-		Serial.print(',');
-		Serial.println(gyro.gz_s);
-
-		Serial.print("Roll: ");
-		Serial.println(angles.roll);
-		Serial.print("Pitch: ");
-		Serial.println(angles.pitch);
-		Serial.print("Temperature: ");
-		Serial.println(temp);
 	}
 }
 
