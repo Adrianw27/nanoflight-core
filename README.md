@@ -1,6 +1,5 @@
 # nanoflight-core
-Mini Avionics &amp; Guidance Computer (with IMU Kalman attitude estimation and Python ground-station visualization)
-Current progress on feat branch
+NanoFlight Core is a custom-built mini avionics and guidance computer running on an Arduino Uno and a 6-DOF MPU-6050 IMU with I2C telemetry. The project implements a custom RTOS-like task scheduler running on a fixed-rate.
 
 ![System Architecture](https://github.com/Adrianw27/nanoflight-core/blob/main/docs/diagrams/system_architecture.png?raw=true)
 
