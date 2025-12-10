@@ -1,3 +1,4 @@
+#include "comms/link.h"
 #include "config/types.h"
 #include <Arduino.h>
 
