@@ -32,6 +32,8 @@ void task_init_system() {
 		app::set_status_flag(app::GLOBAL_FAULT);
 		app::set_mode(app::Mode::Standby);
 	}
+	
+	return;
 }
 
 void task_imu_update() {
@@ -45,6 +47,8 @@ void task_imu_update() {
 		app::set_status_flag(app::GLOBAL_FAULT);
 		app::set_mode(app::Mode::Standby);
 	}
+
+	return;
 }
 
 void task_estimation_update() {
@@ -59,8 +63,8 @@ void task_estimation_update() {
 		app::set_status_flag(app::GLOBAL_FAULT);
 		app::set_mode(app::Mode::Standby);
 	}
+	
 	return;
-
 }
 
 void task_publish_samples() {
@@ -72,6 +76,7 @@ void task_publish_samples() {
 	else {
 		app::set_status_flag(app::STATUS_SERIAL_ERROR);
 	}
+	
 	return;
 }
 
@@ -85,6 +90,7 @@ void task_update_health() {
 	else {
 		app::set_status_flag(app::STATUS_SERIAL_ERROR);
 	}
+	
 	return;
 }
 
