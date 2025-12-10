@@ -2,6 +2,8 @@
 #include <Arduino.h>
 #include <cstdint>
 
+using std::uint32_t;
+
 namespace hal {
 
 uint32_t get_current_micros(){

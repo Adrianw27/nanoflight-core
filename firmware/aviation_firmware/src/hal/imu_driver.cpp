@@ -3,6 +3,14 @@
 #include "config/project_config.h"
 #include "hal/imu_driver.h"
 
+using std::uint8_t;
+using std::uint16_t;
+using std::int16_t;
+using types::RawAccelSample;
+using types::RawGyroSample;
+using types::ScaledAccelSample;
+using types::ScaledGyroSample;
+
 namespace hal {
 
 bool imu_init(){
@@ -19,7 +27,7 @@ bool imu_init(){
 	return status == 0;
 }
 
-bool imu_read_raw(types::ImuRawSample& out){	
+bool imu_read_raw(types::RawAccelSample& accel, types::RawGyroSample& gyro, int16_t temp){	
 	 Wire.beginTransmission(config::imu_i2c_address);
 	 Wire.write(config::accel_output_address);  
 	 if (Wire.endTransmission(false) != 0) {     
@@ -40,32 +48,35 @@ bool imu_read_raw(types::ImuRawSample& out){
 	}
 
 	// Convert individual bytes to 16 bit int
-	out.ax = to_int16(buf[0],  buf[1]);
-	out.ay = to_int16(buf[2],  buf[3]);
-	out.az = to_int16(buf[4],  buf[5]);
-	out.t = to_int16(buf[6], buf[7]);	
-	out.gx = to_int16(buf[8],  buf[9]);
-	out.gy = to_int16(buf[10], buf[11]);
-	out.gz = to_int16(buf[12], buf[13]);
+	accel.ax = to_int16(buf[0],  buf[1])&;
+	accel.ay = to_int16(buf[2],  buf[3]);
+	accel.az = to_int16(buf[4],  buf[5]);
+	
+	temp = to_int16(buf[6], buf[7]);
 
+	gyro.gx = to_int16(buf[8],  buf[9]);
+	gyro.gy = to_int16(buf[10], buf[11]);
+	gyro.gz = to_int16(buf[12], buf[13])
 	return true;
 }
 
-bool imu_read_scaled(types::ImuScaledSample& out){
-	types::ImuRawSample raw{};
-	if (!imuReadRaw(raw)) {
+bool imu_read_scaled(types::ScaledAccelSample& accel, types::ScaledGyroSample& gyro, float& temp){
+	types::RawAccelSample raw_accel{};
+	types::RawGyroSample raw_gyro{};
+	float raw_temp;
+	if (!imu_read_raw(accel, gyro, raw_temp)) {
 		return false;
 	}
 
-	out.ax = static_cast<float>(raw.ax) / config::accel_lsb_per_g;
-	out.ay = static_cast<float>(raw.ay) / config::accel_lsb_per_g;
-	out.az = static_cast<float>(raw.az) / config::accel_lsb_per_g;
+	accel.ax_s = static_cast<float>(raw_accel.ax) / config::accel_lsb_per_g;
+	accel.ay_s = static_cast<float>(raw_accel.ay) / config::accel_lsb_per_g;
+	accel.az_s = static_cast<float>(raw_accel.az) / config::accel_lsb_per_g;
 
-	out.t = static_cast<float>(raw.t) / config::temp_lsb_per_deg + config::temp_offset;
+	temp = static_cast<float>(raw_temp) / config::temp_lsb_per_deg + config::temp_offset;
 
-	out.gx = static_cast<float>(raw.gx) / config::gyro_lsb_per_dps;
-	out.gy = static_cast<float>(raw.gy) / config::gyro_lsb_per_dps;
-	out.gz = static_cast<float>(raw.gz) / config::gyro_lsb_per_dps;
+	gyro.gx_s = static_cast<float>(raw_gyro.gx) / config::gyro_lsb_per_dps;
+	gyro.gy_s = static_cast<float>(raw_gyro.gy) / config::gyro_lsb_per_dps;
+	gyro.gx_z = static_cast<float>(raw_gyro.gz) / config::gyro_lsb_per_dps;
 
 	return true;
 }

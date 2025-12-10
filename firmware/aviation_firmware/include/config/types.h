@@ -2,29 +2,42 @@
 #define CONFIG_TYPES_H
 
 #include <cstdint>
+using std::int16_t;
 
 namespace types {
 
-// Holds raw sensor output for each data point
-struct ImuRawSample {
-    int16_t ax;
-    int16_t ay;
-    int16_t az;
-    int16_t t;
-    int16_t gx;
-    int16_t gy;
-    int16_t gz;
+// Holds raw accelerometer output for each data point
+struct RawAccelSample {
+	int16_t ax;
+	int16_t ay;
+	int16_t az;
 };
 
-// Holds unit scaled sensor output for each data point
-struct ImuScaledSample {
-    float ax_g;
-    float ay_g;
-    float az_g;
-    float t_c;
-    float gx_dps;
-    float gy_dps;
-    float gz_dps;
+// Holds raw gyro output for each data point
+struct RawGyroSample {
+	int16_t gx;
+	int16_t gy;
+	int16_t gz;
+};
+
+// Holds unit scaled accelerometer output for each data point
+struct ScaledAccelSample {
+	float ax_s;
+	float ay_s;
+	float az_s;
+};
+
+// Holds unit scaled gyro output for each data point
+struct ScaledGyroSample {
+	float gx_s;
+	float gy_s;
+	float gz_s;
+};
+
+// Holds pitch, roll angles
+struct AccelTiltAngles {
+	float pitch;
+	float roll;
 };
 
 }
