@@ -6,6 +6,7 @@
 #include "fusion/attitude_math.h"
 #include "hal/imu_driver.h"
 #include "hal/timing.h"
+#include "comms/publish_telemetry.h"
 
 using std::uint32_t;
 
@@ -13,45 +14,78 @@ namespace app {
 
 static types::ScaledAccelSample accel{};
 static types::ScaledGyroSample gyro{};
-static types::AttitudeState state{};
+static types::AttitudeState attitude{};
+static types::HealthState health{};
 static float temp_cel = 0.0f;
+
 static uint32_t last_micros = hal::get_current_micros();
 
+void task_init_system() {
+	comms::telemetry_init();
+	bool imu_init = hal::imu_init();
+
+	if (imu_init) {
+		app::set_status_flag(app::STATUS_IMU_OK);
+	}
+	else {
+		app::clear_status_flag(app::STATUS_IMU_OK);
+		app::set_status_flag(app::GLOBAL_FAULT);
+		app::set_mode(app::Mode::Standby);
+	}
+}
+
 void task_imu_update() {
-    hal::imu_read_scaled(accel, gyro, temp_cel);
+	bool imu_scaled = hal::imu_read_scaled(accel, gyro, temp_cel);
+
+	if (imu_scaled) {
+		app::clear_status_flag(app::STATUS_IMU_OK);
+		app::set_status_flag(app::STATUS_IMU_OK);
+	}
+	else {
+		app::set_status_flag(app::GLOBAL_FAULT);
+		app::set_mode(app::Mode::Standby);
+	}
 }
 
 void task_estimation_update() {
-    state.pitch_deg = fusion::get_pitch_from_accel(accel);
-    state.roll_deg = fusion::get_roll_from_accel(accel);
+	bool set_angles = fusion::get_angles_from_accel(accel);
+	double dt_sec = hal::compute_delta_seconds(last_micros);
+	bool fusion = fusion::update_state_by_gyro(gyro, attitude, dt_sec);
 
-    double dt_sec = hal::compute_delta_seconds(last_micros);
-    fusion::update_state_by_gyro(gyro, state, dt_sec);
+	if (set_angles && fusion) {
+		app::set_status_flag(app::STATUS_FUSION_OK);
+	}
+	else {
+		app::set_status_flag(app::GLOBAL_FAULT);
+		app::set_mode(app::Mode::Standby);
+	}
+	return;
+
 }
 
-void task_telemetry_update() {
-    // Print all data in CSV for ground station
-    Serial.print(accel.ax_g);
-    Serial.print(',');
-    Serial.print(accel.ay_g);
-    Serial.print(',');
-    Serial.print(accel.az_g);
-    Serial.print(',');
+void task_publish_samples() {
+	bool write = comms::publish_samples(accel, gyro, temp_cel, attitude);
+	
+	if (write) {
+		app::clear_status_flag(app::STATUS_SERIAL_ERROR);
+	}
+	else {
+		app::set_status_flag(app::STATUS_SERIAL_ERROR);
+	}
+	return;
+}
 
-    Serial.print(gyro.gx_dps);
-    Serial.print(',');
-    Serial.print(gyro.gy_dps);
-    Serial.print(',');
-    Serial.print(gyro.gz_dps);
-    Serial.print(',');
+void task_update_health() {
+	comms::update_health(health);
+	bool write = comms::publish_health(health);
 
-    Serial.print(temp_cel);
-    Serial.print(',');
-
-    Serial.print(state.pitch_deg);
-    Serial.print(',');
-
-    Serial.println(state.roll_deg);
+	if (write) {
+		app::clear_status_flag(app::STATUS_SERIAL_ERROR);
+	}
+	else {
+		app::set_status_flag(app::STATUS_SERIAL_ERROR);
+	}
+	return;
 }
 
 void task_ui_update() {

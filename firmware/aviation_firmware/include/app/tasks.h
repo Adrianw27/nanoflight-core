@@ -10,7 +10,10 @@ void task_imu_update();
 void task_estimation_update();
 
 // task to emit telemetry
-void task_telemetry_update();
+void task_publish_telemetry();
+
+// task to publish health
+void task_publish_health();
 
 // task to refresh any LEDs / UI elements
 void task_ui_update();

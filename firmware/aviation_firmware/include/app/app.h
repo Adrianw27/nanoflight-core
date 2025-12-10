@@ -9,6 +9,6 @@ void app_init();
 // ticks scheduler
 void app_loop_tick();
 
-}  // namespace app
+} 
 
 #endif

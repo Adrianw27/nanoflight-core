@@ -1,17 +1,15 @@
 #include <Arduino.h>
-#include "app/app.h"
-#include "app/scheduler.h"
-#include "hal/imu_driver.h"
+#include "app/mode.h"
 
 namespace app {
 
 void app_init() {
-	Serial.begin(115200);
-	hal::imu_init();
+	app::set_mode(app::Mode::Init);
 	scheduler_init();
 }
 
 void app_loop_tick() {
+	app::set_mode(app::Mode::Active);
 	scheduler_tick();
 }
 

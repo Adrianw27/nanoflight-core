@@ -40,6 +40,21 @@ struct AttitudeState {
 	double roll_deg;
 };
 
+// Holds health data
+struct HealthTelemetry {
+    uint32_t uptime_ms;
+    uint8_t mode;
+    uint8_t status_flags; // bitfield for errors/warnings
+};
+
+// Holds task table with funcs and timings for scheduler
+struct ScheduledTask {
+	void (*task)();
+	std::uint32_t period_micros;
+	std::uint32_t last_run_micros;
+	bool enabled;
+};
+
 }
 
 #endif
