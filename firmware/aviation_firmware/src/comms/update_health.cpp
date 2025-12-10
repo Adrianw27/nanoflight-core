@@ -1,6 +1,4 @@
-#ifndef COMMS_HEALTH_TELEMETRY_H
-#define COMMS_HEALTH_TELEMETRY_H
-
+#include "comms/update_health.h"
 #include "config/types.h"
 #include "hal/timing.h"
 #include <cstdint>
