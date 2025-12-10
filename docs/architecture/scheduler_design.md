@@ -17,20 +17,16 @@ The design should be portable to a future RTOS-based implementation (e.g., STM32
 
 ## 2. Task Model
 
-The system uses a **periodic task model**: each task has a fixed period and runs as often as possible at that rate, subject to being non-blocking.
+The system uses a **periodic task model**: each task has a fixed period and runs as often as possible at that rate.
 
-Planned tasks (initial set):
+Planned tasks:
 
-| Task Name         | Responsibility                          | Target Rate | Layer(s) Touched           |
-|-------------------|-----------------------------------------|------------:|----------------------------|
-| `taskImuRead`     | Read raw IMU sample from HAL            | 200–500 Hz  | HAL, Sensor Layer          |
-| `taskEstimation`  | Run Kalman filter update                | 200–500 Hz  | State Estimation           |
-| `taskTelemetry`   | Send telemetry over serial              |  20–50 Hz   | Comms Layer, App           |
-| `taskUi`          | Update LEDs/LCD/encoder/buzzer          |   5–20 Hz   | App, HAL (future UI parts) |
-
-Notes:
-- Early versions won't need taskUi
-- For simplicity, `taskImuRead` and `taskEstimation` may initially be combined into a single high-rate task.
+| Task Name         | Responsibility                          | Target Rate |
+|-------------------|-----------------------------------------|-------------|
+| `task_imu_read`     | Read raw IMU sample from HAL            | 200–500 Hz  |
+| `task_estimation`  | Run Kalman filter update                | 200–500 Hz  | 
+| `task_telemetry`   | Send telemetry over serial              |  20–50 Hz   |
+| `task_ui`          | Update LEDs/LCD/encoder/buzzer          |   5–20 Hz   |
 
 ---
 
@@ -39,21 +35,21 @@ Notes:
 ### 3.1 Time Source
 
 - The scheduler uses microsecond timing from HAL:
-  - `hal::Timing::nowMicros()` 
-  - `hal::Timing::computeDeltaSeconds()`
+  - `hal::get_current_micros()` 
+  - `hal::compute_delta_seconds()`
 
 ### 3.2 Periods and Jitter
 
 Each task has:
 
-- `periodMicros` – desired period in microseconds
-- `lastRunMicros` – last time the task executed
+- `period_micros` – desired period in microseconds
+- `last_run_micros` – last time the task executed
 
 Effective rate (when a task runs):
 
 ```cpp
-if (now - lastRunMicros >= periodMicros) {
-    runTask();
-    lastRunMicros = now;
+if (now - last_run_micros >= period_micros) {
+    run_task();
+    last_run_micros = now;
 }
 
