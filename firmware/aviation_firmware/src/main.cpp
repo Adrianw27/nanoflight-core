@@ -18,6 +18,7 @@ void setup() {
 
 void loop() {
 	static uint32_t last_micros = hal::get_current_micros();
+	static uint32_t last_print_micros = last_micros;
 
 	ScaledAccelSample accel;
 	ScaledGyroSample gyro;
@@ -29,13 +30,14 @@ void loop() {
 	double dt_sec = dt_micros / 1000000.0;
 	last_micros = current_micros;
 
-	if (hal::imu_read_scaled(accel, gyro, temp_cel) {
+	if (hal::imu_read_scaled(accel, gyro, temp_cel)) {
 
 		state.pitch_deg = fusion::get_pitch_from_accel(accel);
 		state.roll_deg = fusion::get_roll_from_accel(accel);
-		update_state_by_gyro(gyro, state, dt_sec);
+		fusion::update_state_by_gyro(gyro, state, dt_sec);
 
-		if (dt_micros > 20000) { // e.g., print at 50 Hz
+		if (current_micros - last_print_micros > 20000) { // e.g., print at 50 Hz
+			last_print_micros = current_micros;
 			// Print all data in csv for ground station
 
 			// Accelerometer data (x,y,z) - units g
@@ -50,7 +52,7 @@ void loop() {
 			Serial.print(',');
 			Serial.print(gyro.gy_dps);
 			Serial.print(',');
-			Serial.print(gyro.gz_dps)
+			Serial.print(gyro.gz_dps);
 			Serial.print(',');;
 			
 			Serial.print(temp_cel); // Temperature - units deg celcius
