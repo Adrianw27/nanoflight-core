@@ -9,7 +9,7 @@ namespace hal {
 uint32_t get_current_micros();
 
 // Get delta time since last timestamp recorded
-float compute_delta_seconds(uint32_t& last_micros);
+double compute_delta_seconds(uint32_t& last_micros);
 
 }
 

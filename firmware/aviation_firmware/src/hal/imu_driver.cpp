@@ -27,9 +27,6 @@ bool imu_init(){
 	Wire.write(0x00);
 
 	uint8_t status = Wire.endTransmission();
-
-	delay(100);
-
 	return status == 0;
 }
 

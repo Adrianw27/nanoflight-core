@@ -10,12 +10,12 @@ uint32_t get_current_micros(){
 	return micros();
 }
 
-float compute_delta_seconds(uint32_t& last_micros){
+double compute_delta_seconds(uint32_t& last_micros){
 	uint32_t current_micros = micros();
 	uint32_t delta = current_micros - last_micros;  
 	last_micros = current_micros;
 	
-	return static_cast<float>(delta) / 1'000'000.0f;
+	return static_cast<double>(delta) / 1000000.0;
 }
 
 }
