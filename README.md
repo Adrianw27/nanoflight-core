@@ -27,24 +27,32 @@ The goals are to:
 
 - `firmware/`  
   - `arduino-uno/` – global configuration (constants, pin mappings, common types).
-  - `hal/`
-      - `hal/` – hardware abstraction layer headers (I²C, IMU, timing, serial, etc.).
-      - `fusion/` – Kalman filters and other sensor-fusion interfaces.
-      - `controllers/` – guidance and control algorithm interfaces (e.g., attitude controller).
-      - `comms/` – telemetry protocol and communication interfaces.
-      - `app/` – high-level application interfaces (scheduler, modes, app entry points).
-  - `drivers/`
-    - `telemetry/`
+  - `hal/` – hardware abstraction layer headers (I²C, IMU, serial, etc.).
     - `i2c/`
     - `imu/`
+    - `serial/`
+    - `timing/`
   - `src/`
+    - `include/`
+      - `types/`
     - `lib/`
       - `fusion/` – Kalman filter and fusion algorithm implementations.
+        - `kalman/`
+        - `complimentary/`
+      - `controllers/`
+      - `math/`
+    - `middleware/`
+      - `commander/` - mode state machine
+      - `scheduler/`
+      - `health/`
+      - `telemetry/`
     - `modules/`
-      - `controllers/` – control law implementations (P/PID, guidance logic, etc.).
-      - `telemetry/` – telemetry packet formatting/parsing implementations.
-      - `app/` – application logic, cooperative scheduler, mode state machine.
-      - `main.cpp` – firmware entry point tying all modules together.
+      - `fusion_task/`
+      - `control_task/`
+      - `telemetry_task/`
+      - `health_task/`
+      - `node_manager` 
+    - `main.cpp` – firmware entry point tying all modules together.
   - `tests/`
     - `unit/` – unit tests for fusion, controllers, etc. (using offline data or simulated inputs).
     - `hardware_sim/` – replay tests that feed recorded IMU logs into the algorithms.
@@ -52,7 +60,7 @@ The goals are to:
 
 - `ground_station/`
   - `python/`
-    - `telemetry_client/` – code that connects to the MCU over serial and consumes telemetry.
+    - `receiver/` – code that connects to the MCU over serial and consumes telemetry.
     - `ui/` – 3D visualization and plotting components.
     - `backend/` – optional REST/WebSocket backend for more advanced ground-station setups.
 
