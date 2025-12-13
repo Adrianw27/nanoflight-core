@@ -2,8 +2,8 @@
 NanoFlight Core is a custom-built mini avionics and guidance computer running on an Arduino Uno and a 6-DOF MPU-6050 IMU with I2C telemetry. All components are designed from scratch, including an RTOS-like task scheduler for rate-determinism, sensor-fusion estimates for more precise data, a telemetry stream to a Python ground station for 3D visualization, and more. 
 
 * Nanoflight Core was structurally designed to mimic the architetcture and implementation of real-world avionics firmware.
-** All functionality is divided into modular and reusable components
-** Communication is done by asynchronous message passing
+*  - All functionality is divided into modular and reusable components
+*  - Communication is done by asynchronous message passing
 
 ![System Architecture](https://github.com/Adrianw27/nanoflight-core/blob/main/docs/diagrams/system_architecture.png?raw=true)
 
@@ -26,33 +26,21 @@ The goals are to:
 ## Repository Layout
 
 - `firmware/`  
-  - `arduino-uno/` – global configuration (constants, pin mappings, common types).
-  - `hal/` – hardware abstraction layer headers (I²C, IMU, serial, etc.).
-    - `i2c/`
-    - `imu/`
-    - `serial/`
-    - `timing/`
-  - `src/`
+  - `avionics_firmware/`
     - `include/`
-      - `types/`
-    - `lib/`
+      - `config/` – global configuration (constants, pin mappings, common types).
+      - `hal/` – hardware abstraction layer headers (I²C, IMU, timing, serial, etc.).
+      - `fusion/` – Kalman filters and other sensor-fusion interfaces.
+      - `controllers/` – guidance and control algorithm interfaces (e.g., attitude controller).
+      - `telemetry/` – telemetry protocol and communication interfaces.
+      - `app/` – high-level application interfaces (scheduler, modes, app entry points).
+    - `src/`
+      - `hal/` – implementations of hardware abstraction (IMU driver, timing utilities, serial helpers).
       - `fusion/` – Kalman filter and fusion algorithm implementations.
-        - `kalman/`
-        - `complimentary/`
-      - `controllers/`
-      - `math/`
-    - `middleware/`
-      - `commander/` - mode state machine
-      - `scheduler/`
-      - `health/`
-      - `telemetry/`
-    - `modules/`
-      - `fusion_task/`
-      - `control_task/`
-      - `telemetry_task/`
-      - `health_task/`
-      - `node_manager` 
-    - `main.cpp` – firmware entry point tying all modules together.
+      - `controllers/` – control law implementations (P/PID, guidance logic, etc.).
+      - `telemetry/` – telemetry packet formatting/parsing implementations.
+      - `app/` – application logic, cooperative scheduler, mode state machine.
+      - `main.cpp` – firmware entry point tying all modules together.
   - `tests/`
     - `unit/` – unit tests for fusion, controllers, etc. (using offline data or simulated inputs).
     - `hardware_sim/` – replay tests that feed recorded IMU logs into the algorithms.
@@ -60,7 +48,7 @@ The goals are to:
 
 - `ground_station/`
   - `python/`
-    - `receiver/` – code that connects to the MCU over serial and consumes telemetry.
+    - `telemetry_client/` – code that connects to the MCU over serial and consumes telemetry.
     - `ui/` – 3D visualization and plotting components.
     - `backend/` – optional REST/WebSocket backend for more advanced ground-station setups.
 
