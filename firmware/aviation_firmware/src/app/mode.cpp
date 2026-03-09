@@ -1,4 +1,4 @@
-#include "app/mode.hpp"
+#include "app/mode.h"
 
 namespace app {
 
@@ -6,12 +6,10 @@ static Mode g_mode = Mode::Boot;
 
 void set_mode(Mode mode) {
     g_mode = mode;
-    return;
 }
 
 Mode get_mode() {
     return g_mode;
 }
 
-} 
-
+}
