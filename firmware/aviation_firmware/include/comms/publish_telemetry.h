@@ -9,10 +9,10 @@ namespace comms {
 bool telemetry_init();
 
 // publish all data
-bool publish_samples(const config::ScaledAccelSample&, const config::ScaledGyroSample&, const float& temp_cel, const config::AttitudeState&);
+bool publish_samples(const types::ScaledAccelSample&, const types::ScaledGyroSample&, const float& temp_cel, const types::AttitudeState&);
 
-// publish health();
-bool publish_health(const config::HealthState&);
+// publish health
+bool publish_health(const types::HealthTelemetry&);
 
 }
 

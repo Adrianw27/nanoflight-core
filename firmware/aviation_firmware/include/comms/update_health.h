@@ -5,8 +5,8 @@
 
 namespace comms {
 
-// publish health data
-void publish_health(const config::HealthState&);
+// update health data
+void update_health(types::HealthTelemetry&);
 
 }
 

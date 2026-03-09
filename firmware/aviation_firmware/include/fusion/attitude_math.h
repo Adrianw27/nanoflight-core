@@ -6,7 +6,7 @@
 namespace fusion {
 
 // Calculate pitch and roll from accelerometer data
-bool get_angles_accel(const types::ScaledAccelSample&);
+bool get_angles_from_accel(const types::ScaledAccelSample&, types::AttitudeState&);
 
 // Complimentary filter - integrate gyro into estimations
 bool update_state_by_gyro(const types::ScaledGyroSample&, types::AttitudeState&, double dt_seconds);

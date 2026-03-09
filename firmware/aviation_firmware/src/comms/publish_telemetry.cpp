@@ -1,15 +1,17 @@
-#include "config/types.h"
 #include "comms/link.h"
 #include "comms/publish_telemetry.h"
 
 namespace comms {
 
-void telemetry_init() {
+bool telemetry_init() {
 	comms::serial_init();
-	return;
+	return true;
 }
 
-bool publish_samples(const config::ScaledAccelSample& accel, const config::ScaledGyroSample& gyro, const float& temp_cel, const config::AttitudeState& attitude) {
+bool publish_samples(const types::ScaledAccelSample& accel,
+                     const types::ScaledGyroSample& gyro,
+                     const float& temp_cel,
+                     const types::AttitudeState& attitude) {
 	bool success = serial_write_accel(accel);
 	success = success && serial_write_gyro(gyro);
 	success = success && serial_write_temp(temp_cel);
@@ -17,13 +19,8 @@ bool publish_samples(const config::ScaledAccelSample& accel, const config::Scale
 	return success;
 }
 
-bool publish_health(const config::HealthState& health) {
-	bool success = serial_write_health(health);
-	return success;
+bool publish_health(const types::HealthTelemetry& health) {
+	return serial_write_health(health);
 }
 
-// later implement read telemetry and also publish raw data
-
 }
-
-#endif
