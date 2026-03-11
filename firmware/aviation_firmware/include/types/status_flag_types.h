@@ -15,10 +15,9 @@ namespace Types {
 
         void set_status_flag(StatusFlag flag);
         void clear_status_flag(StatusFlag flag);
-        uint8_t get_status_flags();
+        std::uint8_t get_status_flags();
 
     }
 }
 
 #endif
-

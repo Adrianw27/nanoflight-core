@@ -1,14 +1,13 @@
 #ifndef LIB_FUSION_COMPLEMENTARY_H
 #define LIB_FUSION_COMPLEMENTARY_H
 
-#include "../../types/imu_types.h"
+#include "config/types.h"
 
-namespace Lib {
-    namespace Math {
+namespace fusion {
 
-        bool update_state_by_gyro(const types::ScaledGyroSample *gyro, types::AttitudeState *state, const double *dt_seconds);
+void reset_complementary_filter(types::ComplementaryFilterState&, double alpha);
+bool update_state_by_complementary(const types::ScaledAccelSample&, const types::ScaledGyroSample&, types::ComplementaryFilterState&, types::AttitudeState&, double dt_seconds);
 
-    }
 }
 
 #endif

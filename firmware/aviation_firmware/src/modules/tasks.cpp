@@ -17,8 +17,12 @@ namespace app {
 static types::ScaledAccelSample accel{};
 static types::ScaledGyroSample gyro{};
 static types::AttitudeState attitude{};
+static types::AttitudeState accel_attitude{};
+static types::AttitudeState complementary_attitude{};
 static types::HealthTelemetry health{};
 static float temp_cel = 0.0f;
+static types::ComplementaryFilterState complementary_filter{};
+static types::KalmanFilterState kalman_filter{};
 
 static uint32_t last_micros = 0;
 
@@ -26,6 +30,8 @@ void task_init_system() {
 	comms::telemetry_init();
 	bool imu_init_ok = hal::imu_init();
 	last_micros = hal::get_current_micros();
+	fusion::reset_complementary_filter(complementary_filter, 0.98);
+	fusion::reset_kalman_filter(kalman_filter, 0.001, 0.003, 0.03);
 
 	if (imu_init_ok) {
 		app::set_status_flag(app::STATUS_IMU_OK);
@@ -49,11 +55,12 @@ void task_imu_update() {
 }
 
 void task_estimation_update() {
-	bool set_angles = fusion::get_angles_from_accel(accel, attitude);
+	bool set_angles = fusion::get_angles_from_accel(accel, accel_attitude);
 	double dt_sec = hal::compute_delta_seconds(last_micros);
-	bool fused = fusion::update_state_by_gyro(gyro, attitude, dt_sec);
+	bool complementary_ok = fusion::update_state_by_complementary(accel, gyro, complementary_filter, complementary_attitude, dt_sec);
+	bool fused = fusion::update_state_by_kalman(accel, gyro, kalman_filter, attitude, dt_sec);
 
-	if (set_angles && fused) {
+	if (set_angles && complementary_ok && fused) {
 		app::set_status_flag(app::STATUS_FUSION_OK);
 	} else {
 		app::clear_status_flag(app::STATUS_FUSION_OK);
