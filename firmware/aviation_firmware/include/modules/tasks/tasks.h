@@ -1,7 +1,8 @@
 #ifndef APP_TASKS_H
 #define APP_TASKS_H
 
-namespace app {
+namespace Modules {
+    namespace Tasks {
 
 // task to initialize system components
 void task_init_system();
@@ -21,6 +22,7 @@ void task_update_health();
 // task to refresh any LEDs / UI elements
 void task_ui_update();
 
-}  // namespace app
+    }
+}
 
 #endif

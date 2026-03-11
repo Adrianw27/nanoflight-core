@@ -1,0 +1,42 @@
+#ifndef TYPES_IMU_TYPES_H
+#define TYPES_IMU_TYPES_H
+
+#include <cstdint>
+using std::int16_t;
+
+namespace Types {
+    namespace Imu {
+
+        // Holds raw accelerometer output for each data point
+        struct RawAccelSample {
+            int16_t ax;
+            int16_t ay;
+            int16_t az;
+        };
+
+        // Holds raw gyro output for each data point
+        struct RawGyroSample {
+            int16_t gx;
+            int16_t gy;
+            int16_t gz;
+        };
+
+        // Holds unit scaled accelerometer output for each data point
+        struct ScaledAccelSample {
+            float ax_g;
+            float ay_g;
+            float az_g;
+        };
+
+        // Holds unit scaled gyro output for each data point
+        struct ScaledGyroSample {
+            float gx_dps;
+            float gy_dps;
+            float gz_dps;
+        };
+
+
+    }
+}
+
+#endif
