@@ -24,6 +24,7 @@ using KalmanFilterState = Types::Attitude::KalmanFilterState;
 using Mode = Types::Mode::Mode;
 using ScheduledTask = Types::Task::ScheduledTask;
 using StatusFlag = Types::StatusFlags::StatusFlag;
+using SampleTelemetry = Types::Telemetry::SampleTelemetry;
 using HealthTelemetry = Types::Telemetry::HealthTelemetry;
 
 }

@@ -19,6 +19,7 @@ static types::ScaledGyroSample gyro{};
 static types::AttitudeState attitude{};
 static types::AttitudeState accel_attitude{};
 static types::AttitudeState complementary_attitude{};
+static types::SampleTelemetry sample_telemetry{};
 static types::HealthTelemetry health{};
 static float temp_cel = 0.0f;
 static types::ComplementaryFilterState complementary_filter{};
@@ -70,7 +71,15 @@ void task_estimation_update() {
 }
 
 void task_publish_samples() {
-	bool write_ok = comms::publish_samples(accel, gyro, temp_cel, attitude);
+	sample_telemetry.time_ms = hal::get_uptime();
+	sample_telemetry.accel = accel;
+	sample_telemetry.gyro = gyro;
+	sample_telemetry.temp_cel = temp_cel;
+	sample_telemetry.accel_attitude = accel_attitude;
+	sample_telemetry.complementary_attitude = complementary_attitude;
+	sample_telemetry.kalman_attitude = attitude;
+
+	bool write_ok = comms::publish_samples(sample_telemetry);
 
 	if (write_ok) {
 		app::clear_status_flag(app::STATUS_SERIAL_ERROR);
