@@ -20,7 +20,6 @@ static types::ScheduledTask task_table[] = {
 static constexpr std::size_t task_count = sizeof(task_table) / sizeof(task_table[0]);
 
 void scheduler_init() {
-	app::set_mode(app::Mode::Init);
 	std::uint32_t now = hal::get_current_micros();
 	for (std::size_t i = 0; i < task_count; ++i) {
 		task_table[i].last_run_micros = now;
@@ -28,9 +27,8 @@ void scheduler_init() {
 }
 
 void scheduler_tick() {
-	app::set_mode(app::Mode::Active);
-
 	std::uint32_t now = hal::get_current_micros();
+	bool scheduler_warn = false;
 
 	for (std::size_t i = 0; i < task_count; ++i) {
 		types::ScheduledTask& t = task_table[i];
@@ -45,10 +43,14 @@ void scheduler_tick() {
 		}
 
 		if (elapsed > (t.period_micros * 2u)) {
-			app::set_status_flag(app::STATUS_SCHEDULER_WARN);
-		} else {
-			app::clear_status_flag(app::STATUS_SCHEDULER_WARN);
+			scheduler_warn = true;
 		}
+	}
+
+	if (scheduler_warn) {
+		app::set_status_flag(app::STATUS_SCHEDULER_WARN);
+	} else {
+		app::clear_status_flag(app::STATUS_SCHEDULER_WARN);
 	}
 }
 

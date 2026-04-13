@@ -97,7 +97,7 @@ def build_plot() -> tuple[plt.Figure, plt.Axes, plt.Axes]:
 
     axes_plot = figure.add_subplot(1, 2, 2)
     axes_plot.set_facecolor("#fff8ec")
-    axes_plot.set_title("Pitch / Roll History", fontsize=14, fontweight="bold")
+    axes_plot.set_title("Attitude History", fontsize=14, fontweight="bold")
     axes_plot.set_xlabel("Time (s)")
     axes_plot.set_ylabel("Angle (deg)")
     axes_plot.set_ylim(-90.0, 90.0)
@@ -135,8 +135,16 @@ def main() -> int:
 
     pitch_history: deque[float] = deque(maxlen=args.history)
     roll_history: deque[float] = deque(maxlen=args.history)
+    accel_pitch_history: deque[float] = deque(maxlen=args.history)
+    accel_roll_history: deque[float] = deque(maxlen=args.history)
+    complementary_pitch_history: deque[float] = deque(maxlen=args.history)
+    complementary_roll_history: deque[float] = deque(maxlen=args.history)
     time_history: deque[float] = deque(maxlen=args.history)
 
+    accel_pitch_line, = axes_plot.plot([], [], color="#8c8c8c", linewidth=1.4, linestyle="--", label="Accel Pitch")
+    accel_roll_line, = axes_plot.plot([], [], color="#b4b4b4", linewidth=1.4, linestyle="--", label="Accel Roll")
+    complementary_pitch_line, = axes_plot.plot([], [], color="#dd8452", linewidth=1.8, label="Complementary Pitch")
+    complementary_roll_line, = axes_plot.plot([], [], color="#4c72b0", linewidth=1.8, label="Complementary Roll")
     pitch_line, = axes_plot.plot([], [], color="#cf5c36", linewidth=2.2, label="Kalman Pitch")
     roll_line, = axes_plot.plot([], [], color="#2b59c3", linewidth=2.2, label="Kalman Roll")
     axes_plot.legend(loc="upper left")
@@ -172,7 +180,14 @@ def main() -> int:
 
         sample = state.latest_sample
         if sample is None:
-            return edge_lines + [pitch_line, roll_line]
+            return edge_lines + [
+                accel_pitch_line,
+                accel_roll_line,
+                complementary_pitch_line,
+                complementary_roll_line,
+                pitch_line,
+                roll_line,
+            ]
 
         rotation = rotation_matrix_from_pitch_roll(sample.kalman_pitch_deg, sample.kalman_roll_deg)
         transformed_vertices = (rotation @ vertices.T).T
@@ -190,9 +205,17 @@ def main() -> int:
             state.last_rendered_time_ms = sample.time_ms
             seconds = sample.time_ms / 1000.0
             time_history.append(seconds)
+            accel_pitch_history.append(sample.accel_pitch_deg)
+            accel_roll_history.append(sample.accel_roll_deg)
+            complementary_pitch_history.append(sample.complementary_pitch_deg)
+            complementary_roll_history.append(sample.complementary_roll_deg)
             pitch_history.append(sample.kalman_pitch_deg)
             roll_history.append(sample.kalman_roll_deg)
 
+        accel_pitch_line.set_data(time_history, accel_pitch_history)
+        accel_roll_line.set_data(time_history, accel_roll_history)
+        complementary_pitch_line.set_data(time_history, complementary_pitch_history)
+        complementary_roll_line.set_data(time_history, complementary_roll_history)
         pitch_line.set_data(time_history, pitch_history)
         roll_line.set_data(time_history, roll_history)
 
@@ -217,7 +240,14 @@ def main() -> int:
             )
         )
 
-        return edge_lines + [pitch_line, roll_line]
+        return edge_lines + [
+            accel_pitch_line,
+            accel_roll_line,
+            complementary_pitch_line,
+            complementary_roll_line,
+            pitch_line,
+            roll_line,
+        ]
 
     animation = FuncAnimation(figure, update, interval=50, blit=False, cache_frame_data=False)
     figure._animation = animation  # keep a strong reference for matplotlib

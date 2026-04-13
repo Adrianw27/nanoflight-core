@@ -15,4 +15,9 @@
 - NF3. The system shall be structured into clear modules for maintainability.
 - NF4. Telemetry format shall be simple to parse and robust enough for debugging (CSV).
 
-To refine...
+## Hardware Bring-Up Baseline
+
+- B1. The firmware shall compile for Arduino Uno from the repository root with PlatformIO.
+- B2. The firmware shall boot directly into active telemetry operation when IMU and serial initialization succeed.
+- B3. The firmware shall enter `FAULT` mode when IMU reads or estimation updates fail.
+- B4. The ground station shall parse firmware telemetry and display accelerometer, complementary, and Kalman attitude traces.

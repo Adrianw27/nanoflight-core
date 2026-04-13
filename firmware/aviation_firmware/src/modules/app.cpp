@@ -13,7 +13,6 @@ void app_init() {
 }
 
 void app_loop_tick() {
-	app::set_mode(app::Mode::Active);
 	scheduler_tick();
 }
 

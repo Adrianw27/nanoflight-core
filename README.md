@@ -23,41 +23,69 @@ The goals are to:
 - Practice embedded C++ architecture, scheduling, and sensor fusion.
 - May implement: guidance/control logic on an 8-bit MCU.
 
+## Current Status
+
+The repo is set up for Arduino Uno hardware bring-up with:
+
+- a buildable firmware layout under `firmware/aviation_firmware/`
+- MPU-6050 initialization and scaled IMU reads over I2C
+- complementary and Kalman attitude estimation
+- serial telemetry with schema, sample, and health frames
+- a Python ground station with live 3D view and attitude-history plots
+
+The remaining work after bring-up is tuning and extending behavior, not wiring basic structure together.
+
 ## Repository Layout
 
 - `firmware/`  
-  - `avionics_firmware/`
+  - `aviation_firmware/`
     - `include/`
       - `config/` – global configuration (constants, pin mappings, common types).
       - `hal/` – hardware abstraction layer headers (I²C, IMU, timing, serial, etc.).
       - `fusion/` – Kalman filters and other sensor-fusion interfaces.
-      - `controllers/` – guidance and control algorithm interfaces (e.g., attitude controller).
-      - `telemetry/` – telemetry protocol and communication interfaces.
       - `app/` – high-level application interfaces (scheduler, modes, app entry points).
+      - `comms/` and `middleware/telemetry/` – telemetry protocol and communication interfaces.
     - `src/`
       - `hal/` – implementations of hardware abstraction (IMU driver, timing utilities, serial helpers).
       - `fusion/` – Kalman filter and fusion algorithm implementations.
-      - `controllers/` – control law implementations (P/PID, guidance logic, etc.).
       - `telemetry/` – telemetry packet formatting/parsing implementations.
-      - `app/` – application logic, cooperative scheduler, mode state machine.
+      - `modules/` – application logic, cooperative scheduler, mode state machine.
       - `main.cpp` – firmware entry point tying all modules together.
-  - `tests/`
-    - `unit/` – unit tests for fusion, controllers, etc. (using offline data or simulated inputs).
-    - `hardware_sim/` – replay tests that feed recorded IMU logs into the algorithms.
-    - `integration/` – end-to-end tests of firmware behavior and telemetry formats.
 
 - `ground_station/`
   - `python/`
     - `telemetry_client/` – code that connects to the MCU over serial and consumes telemetry.
     - `ui/` – 3D visualization and plotting components.
-    - `backend/` – optional REST/WebSocket backend for more advanced ground-station setups.
 
 - `docs/`
   - `architecture/` – system architecture, scheduler design, and high-level design notes.
   - `requirements/` – functional/non-functional requirements and project schedule.
   - `diagrams/` – block diagrams, timing diagrams, and other visual documentation.
-  - `devlog.md` – chronological development log.
 
-- `media/` – screenshots, wiring diagrams, setup photos, and demo images/videos.
+## Firmware Build
 
+The firmware uses PlatformIO from the repository root:
 
+```bash
+pio run -e uno
+pio run -e uno -t upload
+pio device monitor -b 115200
+```
+
+Wiring for Arduino Uno + MPU-6050:
+
+- `VCC` -> `5V`
+- `GND` -> `GND`
+- `SDA` -> `A4`
+- `SCL` -> `A5`
+
+## Ground Station
+
+From `ground_station/python/`:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python3 visualizer_3d.py --port /dev/ttyACM0 --baud 115200
+```
